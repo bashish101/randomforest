@@ -19,10 +19,9 @@ The example code can be run as:
 
 ## References:
 For more details look at the following implementations:
-
-https://github.com/scikit-learn/scikit-learn/sklearn/ensemble/forest.py
-https://github.com/kevin-keraudren/randomforest-python
-https://machinelearningmastery.com/implement-random-forest-scratch-python
-https://github.com/mrgloom/Kaggle-Facial-Keypoints-Detection-Solutions
+- https://github.com/scikit-learn/scikit-learn/sklearn/ensemble/forest.py
+- https://github.com/kevin-keraudren/randomforest-python
+- https://machinelearningmastery.com/implement-random-forest-scratch-python
+- https://github.com/mrgloom/Kaggle-Facial-Keypoints-Detection-Solutions
 
 
