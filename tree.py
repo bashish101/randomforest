@@ -2,23 +2,21 @@ import numpy as np
 
 class Tree(object):
 	def __init__(self,
-		     params = {
-				     'mode' : 'regression',
-				     'classes' : None,
-				     'comparison' : 'axisaligned',
-				     'selection_count' : None,
-				     'minimum_count' : 1,
-				     'maximum_depth' : 10,
-				     'threshold_count' : 100
-				}):
+		     mode = 'regression',
+		     classes = None,
+		     comparison = 'axisaligned',
+		     selection_count = None,
+		     minimum_count = 1,
+		     maximum_depth = 10,
+		     threshold_count = 100):
 		
-		self.mode = params['mode']
-		self.comparison = params['comparison']
-		self.selection_count = params['selection_count']
-		self.minimum_count = params['minimum_count']
-		self.maximum_depth = params['maximum_depth']
-		self.threshold_count = params['threshold_count']
-		self.classes = params['classes']
+		self.mode = mode
+		self.comparison = comparision
+		self.selection_count = selection_count
+		self.minimum_count = minimum_count
+		self.maximum_depth = maximum_depth
+		self.threshold_count = threshold_count
+		self.classes = classes
 
 		if self.mode == 'regression':
 			self.eval_fn = self.regress
@@ -74,7 +72,7 @@ class Tree(object):
 		return max(set(labels), key = list(labels).count)
 
 	def axis_aligned(self, feat_row, threshold):
-		return (feat_row[threshold['index']] < threshold['value'])
+		return (feat_row[threshold['index']] <= threshold['value'])
 
 	def linear(self, feat_row, threshold):
 		pass

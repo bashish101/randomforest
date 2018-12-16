@@ -21,15 +21,15 @@ class Forest(object):
 			self.eval_fn = self.classify
 
 		self.num_trees = num_trees
-		self.params = {
-				     'mode' : mode,
-				     'classes' : classes,
-				     'comparison' : comparison,
-				     'selection_count' : selection_count,
-				     'minimum_count' : minimum_count,	
-				     'maximum_depth' : maximum_depth,				
-				     'threshold_count' : threshold_count
-				}
+
+		self.mode = mode
+		self.comparison = comparision
+		self.selection_count = selection_count
+		self.minimum_count = minimum_count
+		self.maximum_depth = maximum_depth
+		self.threshold_count = threshold_count
+
+		self.classes = classes
 		self.subsample_flag = subsample_flag
 		self.trees = []
 
@@ -60,11 +60,17 @@ class Forest(object):
 		return (sampled_features, sampled_labels)
 
 	def fit(self, features, labels):
-		if self.params['selection_count'] is None:
-			self.params['selection_count'] = int(math.sqrt(len(features[0])))
+		if self.selection_count is None:
+			self.selection_count = int(math.sqrt(len(features[0])))
 
 		for idx in range(self.num_trees):
-			self.trees.append(Tree(self.params))
+
+			self.trees.append(Tree(self.mode = mode,
+					       self.comparison = comparision
+					       self.selection_count = selection_count
+					       self.minimum_count = minimum_count
+					       self.maximum_depth = maximum_depth
+					       self.threshold_count = threshold_count))
 
 			if self.subsample_flag == True:
 				sampled_features, sampled_labels = self.subsample(features, labels)
