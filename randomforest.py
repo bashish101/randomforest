@@ -23,7 +23,7 @@ class Forest(object):
 		self.num_trees = num_trees
 
 		self.mode = mode
-		self.comparison = comparision
+		self.comparison = comparison
 		self.selection_count = selection_count
 		self.minimum_count = minimum_count
 		self.maximum_depth = maximum_depth
@@ -64,13 +64,13 @@ class Forest(object):
 			self.selection_count = int(math.sqrt(len(features[0])))
 
 		for idx in range(self.num_trees):
-
-			self.trees.append(Tree(self.mode = mode,
-					       self.comparison = comparision
-					       self.selection_count = selection_count
-					       self.minimum_count = minimum_count
-					       self.maximum_depth = maximum_depth
-					       self.threshold_count = threshold_count))
+			sub_tree = Tree(mode = self.mode,
+					comparison = self.comparison,
+					selection_count = self.selection_count,
+					minimum_count = self.minimum_count,
+					maximum_depth = self.maximum_depth,
+					threshold_count = self.threshold_count)
+			self.trees.append(sub_tree)
 
 			if self.subsample_flag == True:
 				sampled_features, sampled_labels = self.subsample(features, labels)

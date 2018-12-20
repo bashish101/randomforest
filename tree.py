@@ -11,7 +11,7 @@ class Tree(object):
 		     threshold_count = 100):
 		
 		self.mode = mode
-		self.comparison = comparision
+		self.comparison = comparison
 		self.selection_count = selection_count
 		self.minimum_count = minimum_count
 		self.maximum_depth = maximum_depth
@@ -42,12 +42,29 @@ class Tree(object):
 			     'right' : None, 
 			     'threshold' : None})
 
+	def entropy(self, labels):
+		size = len(labels)
+		if size == 0:
+			return 0.
+
+		if self.classes is None:
+			classes = set(labels)
+		else:
+			classes = self.classes
+
+		score = 0.
+		for class_val in classes:
+			pb = list(labels).count(class_val) / float(size)
+			score += - pb * (np.log(pb) / np.log(2))
+		return score
+
 	def mse(self, labels):
 		size = len(labels)
 		if size == 0:
 			return 0.
 		mean = np.mean(labels, axis = 0)
-		return np.mean((labels - mean) ** 2)
+		score = np.mean((labels - mean) ** 2)
+		return score
 
 	def gini(self, labels):
 		size = len(labels)
@@ -63,7 +80,8 @@ class Tree(object):
 		for class_val in classes:
 			pb = list(labels).count(class_val) / float(size)
 			score += pb ** 2
-		return (1. - score)
+		score = 1. - score
+		return score
 
 	def regress(self, labels):
 		return np.mean(labels, axis = 0)
@@ -72,7 +90,7 @@ class Tree(object):
 		return max(set(labels), key = list(labels).count)
 
 	def axis_aligned(self, feat_row, threshold):
-		return (feat_row[threshold['index']] <= threshold['value'])
+		return (feat_row[threshold['index']] < threshold['value'])
 
 	def linear(self, feat_row, threshold):
 		pass
@@ -109,17 +127,29 @@ class Tree(object):
 		else:
 			selection.extend(range(len(features[0])))
 
-		best_error = np.inf
+		best_gain = -np.inf
 		best_thresh = None
 		for feat_idx in selection:
 			thresholds = self.generate_thresholds(features[:, feat_idx], self.threshold_count)
 			for idx, value in enumerate(thresholds):
 				threshold = {'value' : value, 'index' : feat_idx}
+
+				pre_err = self.score_fn(labels)
+
 				left, right = self.split(features, labels, threshold)
-				error = (len(left) / float(len(features)) * self.score_fn(left)) + \
-					(len(right) / float(len(features)) * self.score_fn(right))
-				if error < best_error:
-					best_error = error
+				
+				if len(left) == 0 or len(right) == 0:
+					continue
+
+				post_err = (len(left) / float(len(features)) * self.score_fn(left)) + \
+					   (len(right) / float(len(features)) * self.score_fn(right))
+				
+				if self.score_fn == self.gini:
+					gain = 1 - post_err
+				else:
+					gain = pre_err - post_err
+				if gain > best_gain:
+					best_gain = gain
 					best_thresh = threshold
 
 		return best_thresh
@@ -131,11 +161,11 @@ class Tree(object):
 	def create_tree(self, node, features, labels, depth):
 		features = np.array(features)
 		labels = np.array(labels)
-		error = self.score_fn(features)
+		err = self.score_fn(labels)
 
 		if (depth == self.maximum_depth or 
 		    len(features) <= self.minimum_count or
-		    error == 0.):
+		    err == 0.):
 			self.make_leaf(node, labels)
 			return
 
@@ -157,10 +187,6 @@ class Tree(object):
 			else:
 				right_features.append(feat_row)
 				right_labels.append(label)
-		
-		if len(left_features) == 0 or len(right_features) == 0:
-			self.make_leaf(node, labels)
-			return
 
 		node['left'] = self.get_node()
 		node['right'] = self.get_node()
